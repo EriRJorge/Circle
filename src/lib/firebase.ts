@@ -1,8 +1,10 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
+	browserLocalPersistence,
 	getAuth,
 	GoogleAuthProvider,
-	signInWithRedirect,
+	setPersistence,
+	signInWithPopup,
 	signOut,
 } from "firebase/auth";
 import {
@@ -82,7 +84,8 @@ export async function signInWithGoogle(): Promise<void> {
 	const { auth: firebaseAuth } = requireFirebase();
 	const provider = new GoogleAuthProvider();
 	provider.setCustomParameters({ prompt: "select_account" });
-	await signInWithRedirect(firebaseAuth, provider);
+	await setPersistence(firebaseAuth, browserLocalPersistence);
+	await signInWithPopup(firebaseAuth, provider);
 }
 
 export async function signOutUser() {
