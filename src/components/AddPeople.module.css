@@ -1,0 +1,340 @@
+.container {
+	max-width: 672px;
+	margin: 0 auto;
+	padding: 24px 16px;
+}
+
+.header {
+	text-align: center;
+	margin-bottom: 32px;
+}
+
+.title {
+	font-size: 1.875rem;
+	font-weight: 700;
+	color: #111827;
+	margin-bottom: 8px;
+}
+
+.subtitle {
+	color: #4b5563;
+}
+
+.modeToggle {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 32px;
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	padding: 8px;
+	border-radius: 16px;
+}
+
+.modeButton {
+	flex: 1;
+	padding: 12px;
+	border-radius: 12px;
+	transition: all 0.3s ease;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #4b5563;
+}
+
+.modeButton:hover {
+	background-color: #f9fafb;
+}
+
+.modeButton.active {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	color: white;
+	box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.modeButtonContent {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.modeButtonContent svg {
+	width: 20px;
+	height: 20px;
+}
+
+.modeButtonContent span {
+	font-weight: 500;
+}
+
+.mainCard {
+	background: rgba(255, 255, 255, 0.9);
+	backdrop-filter: blur(10px);
+	border-radius: 24px;
+	padding: 32px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.tapContent {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+
+.animationArea {
+	position: relative;
+	height: 256px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.phoneIcon {
+	width: 128px;
+	height: 128px;
+	border-radius: 24px;
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	box-shadow: 0 20px 40px rgba(16, 185, 129, 0.4);
+}
+
+.phoneIcon svg {
+	width: 64px;
+	height: 64px;
+}
+
+.successIcon {
+	width: 128px;
+	height: 128px;
+	border-radius: 50%;
+	background-color: #10b981;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	box-shadow: 0 20px 40px rgba(16, 185, 129, 0.4);
+}
+
+.successIcon svg {
+	width: 80px;
+	height: 80px;
+}
+
+.instructions {
+	text-align: center;
+}
+
+.instructionTitle {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #111827;
+	margin-bottom: 16px;
+}
+
+.instructionText {
+	color: #4b5563;
+	line-height: 1.6;
+}
+
+.tapButton {
+	width: 100%;
+	padding: 16px;
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	color: white;
+	border: none;
+	border-radius: 16px;
+	font-weight: 500;
+	font-size: 1rem;
+	cursor: pointer;
+	box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+	transition: all 0.3s ease;
+}
+
+.nfcActions {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+}
+
+.successMessage,
+.errorMessage {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 16px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+
+.successMessage {
+	background: #ecfdf5;
+	color: #047857;
+}
+
+.successMessage svg {
+	width: 20px;
+	flex-shrink: 0;
+}
+
+.errorMessage {
+	background: #fef2f2;
+	color: #b91c1c;
+}
+
+.tapButton:hover {
+	box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
+	transform: scale(1.05);
+}
+
+.tapButton:disabled {
+	opacity: 0.5;
+	transform: scale(1);
+	cursor: not-allowed;
+}
+
+.infoBox {
+	background-color: #ecfdf5;
+	border-radius: 16px;
+	padding: 16px;
+}
+
+.infoBox p {
+	font-size: 0.875rem;
+	color: #374151;
+	margin: 0;
+	line-height: 1.6;
+}
+
+.qrContent {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+
+.qrDisplay {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+}
+
+.qrCode {
+	width: 256px;
+	height: 256px;
+	background-color: white;
+	border: 4px solid #111827;
+	border-radius: 16px;
+	padding: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.qrCodeInner {
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, #111827 0%, #374151 50%, #111827 100%);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+}
+
+.qrCodeInner svg {
+	width: 128px;
+	height: 128px;
+}
+
+.qrTimer {
+	background-color: #d1fae5;
+	padding: 8px 24px;
+	border-radius: 9999px;
+}
+
+.qrTimer p {
+	font-size: 0.875rem;
+	color: #059669;
+	font-weight: 500;
+	margin: 0;
+}
+
+.scanButton {
+	width: 100%;
+	padding: 16px;
+	background-color: white;
+	border: 2px solid #d1d5db;
+	color: #111827;
+	border-radius: 16px;
+	font-weight: 500;
+	font-size: 1rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	transition: background-color 0.3s ease;
+}
+
+.scanButton:hover {
+	background-color: #f9fafb;
+}
+
+.scanButton svg {
+	width: 20px;
+	height: 20px;
+}
+
+.addLaterCard {
+	margin-top: 24px;
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+	border-radius: 16px;
+	padding: 24px;
+}
+
+.addLaterCard h3 {
+	font-weight: 600;
+	color: #111827;
+	margin: 0 0 8px 0;
+}
+
+.addLaterCard p {
+	font-size: 0.875rem;
+	color: #4b5563;
+	margin: 0 0 16px 0;
+	line-height: 1.6;
+}
+
+.addLaterButton {
+	padding: 8px 24px;
+	background-color: #f3f4f6;
+	color: #374151;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.addLaterButton:hover {
+	background-color: #e5e7eb;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spinning {
+	animation: spin 1s linear infinite;
+}

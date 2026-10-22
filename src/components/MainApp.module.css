@@ -1,0 +1,88 @@
+.container {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #e6fffa 100%);
+	display: flex;
+	flex-direction: column;
+}
+
+.mainContent {
+	flex: 1;
+	overflow-y: auto;
+	padding-bottom: 80px;
+}
+
+.attribution {
+	position: fixed;
+	right: 12px;
+	bottom: 4px;
+	z-index: 2;
+	font-size: 0.65rem;
+	color: #6b7280;
+	pointer-events: none;
+}
+
+.bottomNav {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	border-top: 1px solid #e5e7eb;
+}
+
+.navContainer {
+	max-width: 448px;
+	margin: 0 auto;
+	padding: 12px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.navButton {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 16px;
+	border-radius: 12px;
+	transition: all 0.3s ease;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #4b5563;
+}
+
+.navButton:hover {
+	color: #111827;
+}
+
+.navButton svg {
+	width: 24px;
+	height: 24px;
+}
+
+.navButton span {
+	font-size: 0.75rem;
+}
+
+.navButton.active.feed {
+	color: #059669;
+	background-color: #ecfdf5;
+}
+
+.navButton.active.add {
+	color: #10b981;
+	background-color: #d1fae5;
+}
+
+.navButton.active.circle {
+	color: #14b8a6;
+	background-color: #ccfbf1;
+}
+
+.navButton.active.profile {
+	color: #9333ea;
+	background-color: #f3e8ff;
+}

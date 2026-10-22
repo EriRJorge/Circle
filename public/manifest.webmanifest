@@ -1,0 +1,18 @@
+{
+  "name": "Circle - Real Life First",
+  "short_name": "Circle",
+  "description": "A private social app for the people you meet in real life.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ecfdf5",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/Logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
