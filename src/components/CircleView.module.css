@@ -116,6 +116,11 @@
   white-space: nowrap;
 }
 
+.error {
+  color: #b91c1c;
+  text-align: center;
+}
+
 .metDate {
   font-size: 0.75rem;
   color: #6b7280;

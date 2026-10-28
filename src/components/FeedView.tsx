@@ -16,6 +16,13 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
+import {
+	BookmarkBorder,
+	FavoriteBorder,
+	ImageOutlined,
+	ModeCommentOutlined,
+	MoreHoriz,
+} from "@mui/icons-material";
 import { createPost, getVisiblePosts, uploadImage, type Post, type PostVisibility, type Profile } from "../lib/firebase";
 
 interface FeedViewProps {
@@ -46,6 +53,8 @@ export function FeedView({ user, profile }: FeedViewProps) {
 	}, [profile.state, user.uid]);
 
 	useEffect(() => {
+		// Loading remote posts updates state after the request resolves.
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		void loadPosts();
 	}, [loadPosts]);
 
@@ -85,21 +94,32 @@ export function FeedView({ user, profile }: FeedViewProps) {
 	return (
 		<Box sx={{ minHeight: "100vh", background: "linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #e6fffa 100%)", pb: 10 }}>
 			<Container maxWidth="md" sx={{ pt: 3, pb: 3 }}>
-				<Box sx={{ textAlign: "center", py: 2, mb: 2 }}>
-					<Typography variant="h3" sx={{ fontWeight: 700, color: "#059669" }}>The Promenade</Typography>
+				<Box sx={{ textAlign: "center", py: 1, mb: 1 }}>
+					<Typography variant="h5" sx={{ fontWeight: 700, color: "#059669" }}>The Promenade</Typography>
 					<Typography variant="body2" color="text.secondary">Share moments with your circle</Typography>
 				</Box>
-				<Card sx={{ borderRadius: 3, mb: 3, p: 2 }}>
-					<Stack spacing={2}>
-						<TextField
-							multiline
-							rows={3}
-							fullWidth
-							placeholder="Share something with your circle..."
-							value={content}
-							onChange={(event) => setContent(event.target.value)}
-						/>
-						<Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center">
+				<Card sx={{ borderRadius: 2, mb: 3, p: 1.5 }}>
+					<Stack spacing={1.5}>
+						<Stack direction="row" spacing={1.5} alignItems="center">
+							<Avatar src={profile.photoURL}>{profile.displayName.slice(0, 1)}</Avatar>
+							<TextField
+								fullWidth
+								variant="outlined"
+								size="small"
+								placeholder="Share something with your circle..."
+								value={content}
+								onChange={(event) => setContent(event.target.value)}
+								InputProps={{ sx: { borderRadius: 6 } }}
+							/>
+						</Stack>
+						<Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
+							<Button
+								startIcon={<ImageOutlined />}
+								onClick={() => fileInputRef.current?.click()}
+								sx={{ color: "#059669", textTransform: "none" }}
+							>
+								{mediaURL ? "Change photo" : "Photo"}
+							</Button>
 							<FormControl size="small" sx={{ minWidth: 190 }}>
 								<InputLabel id="post-visibility-label">Who can see this?</InputLabel>
 								<Select
@@ -112,9 +132,6 @@ export function FeedView({ user, profile }: FeedViewProps) {
 									<MenuItem value="public">Public in my state</MenuItem>
 								</Select>
 							</FormControl>
-							<Button variant="outlined" onClick={() => fileInputRef.current?.click()}>
-								{mediaURL ? "Change image" : "Add image"}
-							</Button>
 							<input
 								ref={fileInputRef}
 								type="file"
@@ -125,7 +142,7 @@ export function FeedView({ user, profile }: FeedViewProps) {
 									if (file) void handleMediaUpload(file);
 								}}
 							/>
-							<Button variant="contained" onClick={() => void handleCreatePost()} disabled={isSaving || !content.trim()}>
+							<Button variant="contained" sx={{ borderRadius: 6 }} onClick={() => void handleCreatePost()} disabled={isSaving || !content.trim()}>
 								{isSaving ? "Saving..." : "Post"}
 							</Button>
 						</Stack>
@@ -144,18 +161,26 @@ export function FeedView({ user, profile }: FeedViewProps) {
 					{posts.map((post) => (
 						<Card key={post.id} sx={{ borderRadius: 3 }}>
 							<CardContent>
-								<Stack direction="row" spacing={2} alignItems="center" mb={2}>
+								<Stack direction="row" spacing={2} alignItems="center" mb={1.5}>
 									<Avatar src={post.authorPhotoURL}>{post.authorName.slice(0, 1)}</Avatar>
-									<Box>
+									<Box sx={{ flex: 1 }}>
 										<Typography fontWeight={600}>{post.authorName}</Typography>
 										<Typography variant="caption" color="text.secondary">
 											{post.visibility === "public" ? `Public in ${post.state}` : "Circle only"}
 										</Typography>
 									</Box>
+									<MoreHoriz color="action" />
 								</Stack>
-								<Typography sx={{ whiteSpace: "pre-wrap" }}>{post.content}</Typography>
-							</CardContent>
-							{post.mediaURL && <CardMedia component="img" image={post.mediaURL} alt="Post attachment" sx={{ maxHeight: 400, objectFit: "cover" }} />}
+										<Typography sx={{ whiteSpace: "pre-wrap" }}>{post.content}</Typography>
+									</CardContent>
+									{post.mediaURL && <CardMedia component="img" image={post.mediaURL} alt="Post attachment" sx={{ maxHeight: 400, objectFit: "cover" }} />}
+									<Stack direction="row" justifyContent="space-between" sx={{ px: 2, pb: 1 }}>
+										<Stack direction="row" spacing={1}>
+											<FavoriteBorder color="action" />
+											<ModeCommentOutlined color="action" />
+										</Stack>
+										<BookmarkBorder color="action" />
+									</Stack>
 						</Card>
 					))}
 				</Stack>

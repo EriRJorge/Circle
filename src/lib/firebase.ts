@@ -56,6 +56,10 @@ export interface Profile {
 	createdAt?: unknown;
 }
 
+export interface CircleMember extends Profile {
+	id: string;
+}
+
 export type PostVisibility = "circle" | "public";
 
 export interface Post {
@@ -206,6 +210,48 @@ export async function getVisiblePosts(
 		const bTime = (b.createdAt as { seconds?: number })?.seconds ?? 0;
 		return bTime - aTime;
 	});
+}
+
+export async function getConfirmedCircleMembers(
+	userId: string,
+): Promise<CircleMember[]> {
+	const { db: firestore } = requireFirebase();
+	const connectionsSnapshot = await getDocs(
+		query(
+			collection(firestore, "connections"),
+			where("participants", "array-contains", userId),
+		),
+	);
+	const memberIds = connectionsSnapshot.docs
+		.filter((connection) => connection.data().status === "confirmed")
+		.map((connection) =>
+			(connection.data().participants as string[]).find(
+				(participant) => participant !== userId,
+			),
+		)
+		.filter((id): id is string => Boolean(id));
+
+	const members = await Promise.all(
+		memberIds.map(async (memberId): Promise<CircleMember | null> => {
+			const profileSnapshot = await getDoc(
+				doc(firestore, "profiles", memberId),
+			);
+			if (!profileSnapshot.exists()) {
+				return null;
+			}
+			const data = profileSnapshot.data();
+			return {
+				id: memberId,
+				displayName: data.displayName ?? "Circle member",
+				bio: data.bio ?? "",
+				photoURL: data.photoURL ?? "",
+				state: data.state ?? "",
+				createdAt: data.createdAt,
+			};
+		}),
+	);
+
+	return members.filter((member): member is CircleMember => Boolean(member));
 }
 
 export async function createNfcConnection(

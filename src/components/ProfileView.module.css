@@ -105,6 +105,89 @@
 	color: #111827;
 }
 
+.modalBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	background: rgba(17, 24, 39, 0.45);
+	overflow-y: auto;
+}
+
+.editModal {
+	width: min(100%, 480px);
+	max-height: calc(100vh - 32px);
+	overflow-y: auto;
+	background: white;
+	border-radius: 20px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader,
+.modalActions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 16px 20px;
+}
+
+.modalHeader {
+	border-bottom: 1px solid #f3f4f6;
+}
+
+.modalHeader h2 {
+	margin: 0;
+	font-size: 1.25rem;
+	color: #111827;
+}
+
+.closeButton {
+	display: grid;
+	place-items: center;
+	padding: 6px;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: #4b5563;
+	cursor: pointer;
+}
+
+.closeButton:hover {
+	background: #f3f4f6;
+}
+
+.modalBody {
+	display: grid;
+	gap: 12px;
+	padding: 20px;
+}
+
+.modalBody label {
+	display: grid;
+	gap: 6px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #374151;
+}
+
+.modalBody .profileInput {
+	margin-bottom: 0;
+}
+
+.modalActions {
+	justify-content: flex-end;
+	border-top: 1px solid #f3f4f6;
+}
+
+.modalActions .editButton,
+.modalActions .shareButton {
+	padding: 10px 16px;
+}
+
 .error {
 	color: #b91c1c;
 	font-size: 0.875rem;

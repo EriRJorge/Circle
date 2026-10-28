@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { LogOut, Settings, UserRound } from "lucide-react";
+import { LogOut, Settings, UserRound, X } from "lucide-react";
 import type { User } from "firebase/auth";
 import styles from "./ProfileView.module.css";
 import {
@@ -26,6 +26,12 @@ export function ProfileView({
 	const [isSaving, setIsSaving] = useState(false);
 	const [isUploading, setIsUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const openEditor = () => {
+		setDraft(profile);
+		setError("");
+		setIsEditing(true);
+	};
 
 	const handlePhotoUpload = async (file: File) => {
 		setIsUploading(true);
@@ -83,68 +89,12 @@ export function ProfileView({
 							<UserRound />
 						</div>
 					)}
-					{isEditing && (
-						<>
-							<input
-								ref={fileInputRef}
-								type="file"
-								accept="image/*"
-								hidden
-								onChange={(event) => {
-									const file = event.target.files?.[0];
-									if (file) void handlePhotoUpload(file);
-								}}
-							/>
-							<button
-								className={styles.photoButton}
-								type="button"
-								onClick={() => fileInputRef.current?.click()}
-								disabled={isUploading}
-							>
-								{isUploading ? "Uploading..." : "Change photo"}
-							</button>
-						</>
-					)}
 					<div className={styles.userInfo}>
-						{isEditing ? (
-							<input
-								className={styles.profileInput}
-								value={draft.displayName}
-								onChange={(event) =>
-									setDraft({ ...draft, displayName: event.target.value })
-								}
-								aria-label="Display name"
-							/>
-						) : (
-							<h2 className={styles.userName}>{profile.displayName}</h2>
-						)}
+						<h2 className={styles.userName}>{profile.displayName}</h2>
 						<p className={styles.joinDate}>{user.email}</p>
-						{isEditing ? (
-							<textarea
-								className={styles.profileInput}
-								value={draft.bio}
-								onChange={(event) =>
-									setDraft({ ...draft, bio: event.target.value })
-								}
-								aria-label="Bio"
-								rows={3}
-							/>
-						) : (
-							<p className={styles.bio}>
-								{profile.bio || "Tell your Circle a little about yourself."}
-							</p>
-						)}
-						{isEditing && (
-							<input
-								className={styles.profileInput}
-								value={draft.state}
-								onChange={(event) =>
-									setDraft({ ...draft, state: event.target.value })
-								}
-								placeholder="State (for public posts)"
-								aria-label="State"
-							/>
-						)}
+						<p className={styles.bio}>
+							{profile.bio || "Tell your Circle a little about yourself."}
+						</p>
 					</div>
 				</div>
 
@@ -164,23 +114,103 @@ export function ProfileView({
 				</div>
 
 				<div className={styles.actionButtons}>
-					{isEditing ? (
-						<>
-							<button className={styles.editButton} onClick={saveProfile} disabled={isSaving}>
-								{isSaving ? "Saving..." : "Save Profile"}
-							</button>
-							<button className={styles.shareButton} onClick={() => setIsEditing(false)}>
-								Cancel
-							</button>
-						</>
-					) : (
-						<button className={styles.editButton} onClick={() => setIsEditing(true)}>
-							Edit Profile
-						</button>
-					)}
+					<button className={styles.editButton} onClick={openEditor}>
+						Edit Profile
+					</button>
 				</div>
 				{error && <p className={styles.error}>{error}</p>}
 			</div>
+
+			{isEditing && (
+				<div className={styles.modalBackdrop} role="presentation">
+					<div
+							className={styles.editModal}
+							role="dialog"
+							aria-modal="true"
+							aria-labelledby="edit-profile-title"
+					>
+							<div className={styles.modalHeader}>
+								<h2 id="edit-profile-title">Edit profile</h2>
+								<button
+									className={styles.closeButton}
+									type="button"
+									onClick={() => setIsEditing(false)}
+									aria-label="Close edit profile"
+								>
+									<X />
+								</button>
+							</div>
+							<div className={styles.modalBody}>
+								<input
+									ref={fileInputRef}
+									type="file"
+									accept="image/*"
+									hidden
+									onChange={(event) => {
+										const file = event.target.files?.[0];
+										if (file) void handlePhotoUpload(file);
+									}}
+								/>
+								<button
+									className={styles.photoButton}
+									type="button"
+									onClick={() => fileInputRef.current?.click()}
+									disabled={isUploading}
+								>
+									{isUploading ? "Uploading..." : "Change photo"}
+								</button>
+								<label>
+									Display name
+									<input
+										className={styles.profileInput}
+										value={draft.displayName}
+										onChange={(event) =>
+											setDraft({ ...draft, displayName: event.target.value })
+										}
+									/>
+								</label>
+								<label>
+									Bio
+									<textarea
+										className={styles.profileInput}
+										value={draft.bio}
+										onChange={(event) =>
+											setDraft({ ...draft, bio: event.target.value })
+										}
+										rows={3}
+									/>
+								</label>
+								<label>
+									State
+									<input
+										className={styles.profileInput}
+										value={draft.state}
+										onChange={(event) =>
+											setDraft({ ...draft, state: event.target.value })
+										}
+										placeholder="State (for public posts)"
+									/>
+								</label>
+								{error && <p className={styles.error}>{error}</p>}
+							</div>
+							<div className={styles.modalActions}>
+								<button
+									className={styles.shareButton}
+									onClick={() => setIsEditing(false)}
+								>
+									Cancel
+								</button>
+								<button
+									className={styles.editButton}
+									onClick={() => void saveProfile()}
+									disabled={isSaving}
+								>
+									{isSaving ? "Saving..." : "Save Profile"}
+								</button>
+							</div>
+					</div>
+				</div>
+			)}
 
 			<div className={styles.privacyInfo}>
 				<h3 className={styles.privacyTitle}>

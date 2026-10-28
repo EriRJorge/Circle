@@ -25,7 +25,7 @@ export function MainApp({ user, profile, onProfileChange }: MainAppProps) {
 			<div className={styles.mainContent}>
 				{currentView === "feed" && <FeedView user={user} profile={profile} />}
 				{currentView === "add" && <AddPeopleView userId={user.uid} />}
-				{currentView === "circle" && <CircleView />}
+				{currentView === "circle" && <CircleView userId={user.uid} />}
 				{currentView === "profile" && (
 					<ProfileView
 						user={user}
