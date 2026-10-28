@@ -100,7 +100,10 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
 	if (profileSnapshot.exists()) {
 		const data = profileSnapshot.data();
 		return {
-			displayName: data.displayName ?? user.displayName ?? "Circle member",
+			displayName:
+				typeof data.displayName === "string" && data.displayName.trim()
+					? data.displayName
+					: user.displayName?.trim() || "Circle member",
 			bio: data.bio ?? "",
 			photoURL: data.photoURL ?? user.photoURL ?? "",
 			state: data.state ?? "",
@@ -109,7 +112,7 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
 	}
 
 	const profile: Profile = {
-		displayName: user.displayName ?? "Circle member",
+		displayName: user.displayName?.trim() || "Circle member",
 		bio: "",
 		photoURL: user.photoURL ?? "",
 		state: "",
