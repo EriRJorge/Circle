@@ -98,9 +98,13 @@ export async function getOrCreateProfile(user: User): Promise<Profile> {
 	const profileRef = doc(firestore, "profiles", user.uid);
 	const profileSnapshot = await getDoc(profileRef);
 	if (profileSnapshot.exists()) {
+		const data = profileSnapshot.data();
 		return {
-			...profileSnapshot.data(),
-			state: profileSnapshot.data().state ?? "",
+			displayName: data.displayName ?? user.displayName ?? "Circle member",
+			bio: data.bio ?? "",
+			photoURL: data.photoURL ?? user.photoURL ?? "",
+			state: data.state ?? "",
+			createdAt: data.createdAt,
 		} as Profile;
 	}
 

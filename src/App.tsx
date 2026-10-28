@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FirebaseError } from "firebase/app";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { LandingPage } from "./components/LandingPage";
 import { MainApp } from "./components/MainApp";
@@ -22,23 +23,51 @@ export default function App() {
 		if (!auth) {
 			return;
 		}
-		return onAuthStateChanged(auth, async (nextUser) => {
-			setUser(nextUser);
-			if (nextUser) {
-				try {
-					setProfile(await getOrCreateProfile(nextUser));
-				} catch (profileError) {
-					setError(
-						profileError instanceof Error
-							? profileError.message
-							: "Unable to load your profile.",
-					);
+		let isActive = true;
+		const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+			void (async () => {
+				if (!isActive) {
+					return;
 				}
-			} else {
+
+				setUser(nextUser);
 				setProfile(null);
-			}
-			setIsLoading(false);
+				setError("");
+
+				if (!nextUser) {
+					setIsSigningIn(false);
+					setIsLoading(false);
+					return;
+				}
+
+				try {
+					const nextProfile = await getOrCreateProfile(nextUser);
+					if (isActive) {
+						setProfile(nextProfile);
+					}
+				} catch (profileError) {
+					if (isActive) {
+						const message =
+							profileError instanceof Error
+								? profileError.message
+								: "Unable to load your profile.";
+						setError(
+							`Google sign-in succeeded for ${nextUser.email ?? "your account"}, but Circle could not load your profile. ${message}`,
+						);
+					}
+				} finally {
+					if (isActive) {
+						setIsSigningIn(false);
+						setIsLoading(false);
+					}
+				}
+			})();
 		});
+
+		return () => {
+			isActive = false;
+			unsubscribe();
+		};
 	}, []);
 
 	const handleSignIn = async () => {
@@ -47,12 +76,22 @@ export default function App() {
 		try {
 			await signInWithGoogle();
 		} catch (signInError) {
+			if (
+				signInError instanceof FirebaseError &&
+				signInError.code === "auth/unauthorized-domain"
+			) {
+				setError(
+					`This app's address (${window.location.origin}) is not authorized for Google sign-in. Add it to Firebase Authentication > Settings > Authorized domains, then try again.`,
+				);
+			} else {
+				setError(
+					signInError instanceof Error
+						? signInError.message
+						: "Google sign-in was not completed.",
+				);
+			}
+		} finally {
 			setIsSigningIn(false);
-			setError(
-				signInError instanceof Error
-					? signInError.message
-					: "Google sign-in was not completed.",
-			);
 		}
 	};
 
