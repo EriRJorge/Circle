@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Smartphone, QrCode, CheckCircle } from "lucide-react";
 import { motion } from "motion/react";
+import QRCode from "qrcode";
 import styles from "./AddPeople.module.css";
 import {
 	createNfcConnection,
@@ -22,6 +23,25 @@ export function AddPeopleView({ userId }: AddPeopleViewProps) {
 	const [isWorking, setIsWorking] = useState(false);
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState("");
+	const qrCanvasRef = useRef<HTMLCanvasElement>(null);
+
+	useEffect(() => {
+		if (mode !== "qr" || !qrCanvasRef.current) {
+			return;
+		}
+
+		void QRCode.toCanvas(
+			qrCanvasRef.current,
+			JSON.stringify({ version: 1, userId }),
+			{
+				width: 240,
+				margin: 2,
+				color: { dark: "#111827", light: "#ffffff" },
+			},
+		).catch(() => {
+			setError("Unable to generate your QR contact.");
+		});
+	}, [mode, userId]);
 
 	const handleNfcWrite = async () => {
 		setIsWorking(true);
@@ -168,29 +188,32 @@ export function AddPeopleView({ userId }: AddPeopleViewProps) {
 					<div className={styles.qrContent}>
 						{/* QR Code Display */}
 						<div className={styles.qrDisplay}>
-							{/* Timer */}
+							<div className={styles.qrCode}>
+						<canvas ref={qrCanvasRef} aria-label="Your Circle contact QR code" />
+							</div>
 							<div className={styles.qrTimer}>
-								<p>Unavailable until QR support is enabled</p>
+						<p>Ready to scan</p>
 							</div>
 						</div>
 
 						{/* Instructions */}
 						<div className={styles.instructions}>
 							<h2 className={styles.instructionTitle}>
-								QR fallback is not enabled
+								Share your Circle contact
 							</h2>
 							<p className={styles.instructionText}>
-								Circle currently requires a supported NFC tag for
-								contact exchange. Use the NFC tab on HTTPS or
-								localhost with Chrome on Android.
+								Have the other person scan this code with their
+								iPhone camera or QR scanner, then use the NFC tab
+								to connect when available.
 							</p>
 						</div>
 
 						{/* Info */}
 						<div className={styles.infoBox}>
 							<p>
-								<strong>Important:</strong> Do not share Firebase
-								user IDs through screenshots or public links.
+								<strong>How it works:</strong> This QR code contains
+								only your Circle contact identifier. Share it in
+								person with someone you want to add.
 							</p>
 						</div>
 					</div>

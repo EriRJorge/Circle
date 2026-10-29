@@ -19,6 +19,10 @@ interface NdefReader {
 		type: "reading",
 		listener: (event: { message: NdefMessage }) => void,
 	): void;
+	removeEventListener(
+		type: "reading",
+		listener: (event: { message: NdefMessage }) => void,
+	): void;
 }
 
 declare global {
@@ -49,19 +53,60 @@ export async function readContactFromNfc(
 		throw new Error("NFC is only available in Chrome on supported Android devices.");
 	}
 	const reader = new window.NDEFReader();
-	await reader.scan();
-	reader.addEventListener("reading", (event) => {
-		const record = event.message.records.find(
-			(candidate) => candidate.recordType === "mime",
-		);
-		if (!record) {
-			return;
-		}
-		const decoded = new TextDecoder().decode(record.data);
-		const payload = JSON.parse(decoded) as ContactPayload;
-		if (payload.version !== 1 || !payload.userId) {
-			throw new Error("The NFC contact payload is invalid.");
-		}
-		void onContact(payload);
+	const controller = new AbortController();
+
+	return new Promise<void>((resolve, reject) => {
+		let hasReadContact = false;
+		const handleReading = (event: { message: NdefMessage }) => {
+			if (hasReadContact) {
+				return;
+			}
+
+			try {
+				const record = event.message.records.find(
+					(candidate) =>
+						candidate.recordType === "mime" ||
+						candidate.recordType === "text",
+				);
+				if (!record) {
+					return;
+				}
+				const payload = JSON.parse(
+					new TextDecoder().decode(record.data),
+				) as Partial<ContactPayload>;
+				if (
+					payload.version !== 1 ||
+					typeof payload.userId !== "string" ||
+					!payload.userId
+				) {
+					throw new Error("The NFC contact payload is invalid.");
+				}
+
+				hasReadContact = true;
+				controller.abort();
+				reader.removeEventListener("reading", handleReading);
+				void onContact(payload as ContactPayload)
+					.then(resolve)
+					.catch(reject);
+			} catch (error) {
+				controller.abort();
+				reader.removeEventListener("reading", handleReading);
+				reject(
+					error instanceof Error
+						? error
+						: new Error("The NFC contact payload is invalid."),
+				);
+			}
+		};
+
+		reader.addEventListener("reading", handleReading);
+		void reader.scan({ signal: controller.signal }).catch((error: unknown) => {
+			reader.removeEventListener("reading", handleReading);
+			reject(
+				error instanceof Error
+					? error
+					: new Error("Unable to start NFC scanning."),
+			);
+		});
 	});
 }
